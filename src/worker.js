@@ -29,6 +29,7 @@ const {
   baseFeeReserve,
   miningServiceFee,
   tornadoServiceFee,
+  withdrawalMinPriorityFeeWei,
   tornadoGoerliProxy,
   rewardAccount,
 } = require('./config')
@@ -46,6 +47,12 @@ let controller
 let swap
 let minerContract
 const feeOracle = new TornadoFeeOracleV4(netId, oracleRpcUrl)
+let withdrawalOracle = feeOracle
+if (withdrawalMinPriorityFeeWei !== undefined) {
+  withdrawalOracle = new TornadoFeeOracleV4(netId, oracleRpcUrl)
+  // The oracle accepts gwei; /status advertises the same floor in integer wei.
+  withdrawalOracle.oracle.eip1559.configuration.minPriority = Number(withdrawalMinPriorityFeeWei) / 1e9
+}
 
 async function fetchTree() {
   const elements = await redis.get('tree:elements')
@@ -122,7 +129,7 @@ async function checkTornadoFee({ args, contract }) {
   const [userProvidedFee, refund] = [args[4], args[5]]
 
   const ethPrice = await redis.hget('prices', currency)
-  const relayerEstimatedFee = await feeOracle.calculateWithdrawalFeeViaRelayer(
+  const relayerEstimatedFee = await withdrawalOracle.calculateWithdrawalFeeViaRelayer(
     'relayer_withdrawal_check_v4',
     {},
     tornadoServiceFee,
@@ -220,8 +227,8 @@ async function getTxObject({ data }) {
       data: calldata,
     }
     const [gasPrice, gasLimit] = await Promise.all([
-      feeOracle.getGasPrice('relayer_withdrawal'),
-      feeOracle.getGasLimit(incompleteTx, 'relayer_withdrawal'),
+      withdrawalOracle.getGasPrice('relayer_withdrawal'),
+      withdrawalOracle.getGasLimit(incompleteTx, 'relayer_withdrawal'),
     ])
 
     return Object.assign({ gasLimit, gasPrice }, incompleteTx)
