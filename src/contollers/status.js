@@ -1,5 +1,12 @@
 const queue = require('../queue')
-const { netId, tornadoServiceFee, miningServiceFee, instances, rewardAccount } = require('../config')
+const {
+  netId,
+  tornadoServiceFee,
+  miningServiceFee,
+  instances,
+  rewardAccount,
+  withdrawalMinPriorityFeeWei,
+} = require('../config')
 const { version } = require('../../package.json')
 const { redis } = require('../modules/redis')
 const { readRelayerErrors } = require('../utils')
@@ -16,6 +23,7 @@ async function status(req, res) {
     netId,
     ethPrices,
     tornadoServiceFee,
+    withdrawalMinPriorityFeeWei,
     miningServiceFee,
     version,
     health,
