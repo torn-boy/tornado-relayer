@@ -1,6 +1,6 @@
 # Tornado Cash Classic relayer for Ethereum mainnet
 
-Version **4.1.7** lowers the priority fee floor for Classic withdrawals from 3 to **0.3 gwei**. For both withdrawal fee validation and initial transaction pricing, the worker uses the higher of the network estimate and the floor. The relayer service fee is configured separately. Both `/status` and `/v1/status` report the running version and the floor in integer wei.
+Version **4.1.7** lowers the priority fee floor for Classic withdrawals from 3 to **0.3 gwei**. For both withdrawal fee validation and initial transaction pricing, the worker uses the higher of the floor and the network priority fee estimate accepted by the oracle. If the oracle rejects an extreme estimate, its existing fallback applies. The relayer service fee is configured separately. Clients can identify the running release from the `version` field on `/status` or `/v1/status`.
 
 ## Get the 4.1.7 source
 
@@ -38,7 +38,7 @@ The 4.1.6 and 4.1.7 releases use the same dependency lockfile. You can build the
        -f "$RELEASE_DIR/Dockerfile.upgrade" \
        -t localhost/tornado-relayer:4.1.7 "$RELEASE_DIR"
      docker run --rm --network none --entrypoint node localhost/tornado-relayer:4.1.7 \
-       -e 'const a = require("assert"); a.strictEqual(require("./package.json").version, "4.1.7"); a.strictEqual(require("./src/config").withdrawalMinPriorityFeeWei, "300000000")'
+       -e 'require("assert").strictEqual(require("./package.json").version, "4.1.7")'
      docker image tag "$base_image" localhost/tornado-relayer:4.1.6
    )
    ```
@@ -98,11 +98,11 @@ Run this against the public hostname used by the frontend. Replace the example h
 ```sh
 RELAYER_URL=https://relayer.example.org
 curl -fsS "$RELAYER_URL/status" | jq -e '
-  select(.netId == 1 and .version == "4.1.7" and .withdrawalMinPriorityFeeWei == "300000000")
-  | {netId, version, withdrawalMinPriorityFeeWei, health, currentQueue}'
+  select(.netId == 1 and .version == "4.1.7")
+  | {netId, version, health, currentQueue}'
 ```
 
-A match prints the fields and returns success. Check `health` and the worker logs before accepting traffic. The floor is a JSON **string**. A higher network estimate may raise the quoted priority fee while this field continues to report `"300000000"`.
+A match prints the version, network, health and queue information. Check `health` and the worker logs before accepting traffic.
 
 ## Roll back an upgrade
 

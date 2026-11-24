@@ -50,7 +50,7 @@ const feeOracle = new TornadoFeeOracleV4(netId, oracleRpcUrl)
 let withdrawalOracle = feeOracle
 if (withdrawalMinPriorityFeeWei !== undefined) {
   withdrawalOracle = new TornadoFeeOracleV4(netId, oracleRpcUrl)
-  // The oracle accepts gwei; /status advertises the same floor in integer wei.
+  // The oracle expects the minimum priority fee in gwei.
   withdrawalOracle.oracle.eip1559.configuration.minPriority = Number(withdrawalMinPriorityFeeWei) / 1e9
 }
 
