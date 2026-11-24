@@ -1,0 +1,16 @@
+# Use the image already running on a trusted Ethereum mainnet 4.1.6 worker.
+ARG RELAYER_BASE_IMAGE=localhost/tornado-relayer:4.1.6
+FROM ${RELAYER_BASE_IMAGE}
+WORKDIR /app
+
+COPY yarn.lock /tmp/relayer-upgrade.lock
+RUN test "$(node -p "require('./package.json').version")" = "4.1.6" \
+    && cmp yarn.lock /tmp/relayer-upgrade.lock \
+    && test "$(node -p "require('@tornado/tornado-oracles/package.json').version")" = "1.2.2" \
+    && test "$(node -p "require('@tornado/tx-manager/package.json').version")" = "0.4.9" \
+    && rm /tmp/relayer-upgrade.lock
+
+COPY src/ ./src/
+COPY package.json ./
+EXPOSE 8000
+ENTRYPOINT ["yarn"]
