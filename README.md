@@ -1,60 +1,82 @@
-# Relayer for Tornado Cash [![Build Status](https://github.com/tornadocash/relayer/workflows/build/badge.svg)](https://github.com/tornadocash/relayer/actions)![Sidechains version](https://img.shields.io/badge/version-5.2.1-blue?logo=docker)![Mainnet version](https://img.shields.io/badge/version-4.1.5-blue?logo=docker)
+# Tornado Cash Classic relayer
 
-**\*Tornado Cash was sanctioned by the US Treasury on 08/08/2022, this makes it illegal for US citizens to interact with Tornado Cash and all of it's associated deployed smart contracts. Please understand the laws where you live and take all necessary steps to protect and anonymize yourself.**
+Run the Ethereum mainnet **4.1.7** software locally, inspect its API, or test a worker against a simulated Ethereum node. The local steps below require **no wallet, ETH, domain, or Ethereum RPC subscription**.
 
-**\*It is recommended to run your Relayer on a VPS instnace (Virtual Private Server). Ensure SSH configuration is enabled for security, you can find information about SSH keygen and management [here](https://www.ssh.com/academy/ssh/keygen).**
+The mainnet worker uses a **0.3 gwei minimum priority fee** for Classic withdrawal quotes and initial transaction pricing. Higher network estimates accepted by the fee oracle take precedence. The relayer's percentage service fee is a separate setting. Both status endpoints identify this version as `4.1.7`.
 
-## Deploy with script and docker-compose
+## Run it locally
 
-_The following instructions are for Ubuntu 22.10, other operating systems may vary._
+Install Git, curl 7.71 or later, tar, Python 3.9 or later, and Docker with a running Linux container engine and Compose v2. Run the following in a new directory. The first build downloads the dependencies and the pinned relayer source, so it can take several minutes.
 
-#### Installation:
-
-Just run in terminal:
-
-```bash
-curl -s https://git.tornado.ws/tornadocash/tornado-relayer/raw/branch/main/install.sh | bash
+```sh
+git clone --branch main --single-branch https://github.com/torn-boy/tornado-relayer.git
+cd tornado-relayer
+python3 tools/build-mainnet.py
+docker compose -p tornboy-relayer417-preview -f compose.preview.yml up -d --wait
+curl -fsS --retry 10 --retry-connrefused http://127.0.0.1:18000/status
 ```
 
-#### Configuring environments:
+Open **http://127.0.0.1:18000/status** or **http://127.0.0.1:18000/v1/status**. Both return JSON with `"netId":1` and `"version":"4.1.7"`. This preview runs the real HTTP API and Redis, with the API bound to your computer's loopback address. The worker and watchers run in the separate test below. The preview has no worker health or token prices to report.
 
-1. Go to `tornado-relayer` folder on the server home directory
-2. Check environment files:
+```sh
+# View startup logs
+docker compose -p tornboy-relayer417-preview -f compose.preview.yml logs --tail=30 api
 
-By default each network is preconfigured the naming of `.env.<NETWORK>`
+# Stop the preview and remove its temporary Redis data
+docker compose -p tornboy-relayer417-preview -f compose.preview.yml down -v
+```
 
--   `.env.eth` for Ethereum Mainnet
--   `.env.bsc` for Binance Smart Chain
--   `.env.arb` for Arbitrum
--   `.env.op` for Optimism
--   `.env.gnosis` for Gnosis (xdai)
--   `.env.polygon` for Polygon (matic)
--   `.env.avax` for Avalanche C-Chain
+If you already have a development image built from the source revision below, set `RELAYER_DEV_IMAGE` to its local image tag before starting the preview. Port `18000` must be available.
 
-3.  Configure (fill) environment files for those networks on which the relayer will be deployed:
+### Test the worker and both status endpoints
 
--   Set `PRIVATE_KEY` to your relayer address (remove the 0x from your private key) to each environment file
-    -   _It is recommended not to reuse the same private keys for each network as a security measure_
--   Set `VIRTUAL_HOST` and `LETSENCRYPT_HOST` a unique subndomain for every network to each environment file
-    -   eg: `mainnet.example.com` for Ethereum, `binance.example.com` for Binance etc
-    -   add a A wildcard record DNS record with the value assigned to your instance IP address to configure subdomains
--   Set `RELAYER_FEE` to what you would like to charge as your fee (remember 0.3% is deducted from your staked relayer balance)
--   Set `RPC_URL` to a non-censoring RPC (You can [run your own](https://github.com/feshchenkod/rpc-nodes), or use a [free option](https://chainnodes.org/))
--   Set `ORACLE_RPC_URL` to an Ethereum native RPC endpoint
+From the same checkout, run the integration test with Bash and Docker.
 
-4(Optional). If you want to run relayer for [Nova](https://nova.tornado.ws), fill `.env.nova` file by instructions in [Nova branch](https://git.tornado.ws/tornadocash/tornado-relayer/src/branch/nova), because config is very specific
+```sh
+./tools/smoke-mainnet.sh
+```
 
-#### Deployment:
+This starts Redis, the API, the worker, and the tree, price, and health watchers on a temporary internal Docker network. A simulated Ethereum RPC supplies the chain data and test balance. The check waits for the tree and worker, verifies both status routes, and removes the test containers on exit. A healthy result here describes the local simulation. The simulated RPC only implements reads and subscriptions. To test a particular image, pass its tag as the first argument.
 
-1. Build and deploy the docker source for the configured networks specified via `--profile <NETWORK_SYMBOL>`, for example (if you run relayer only for Ethereum Mainnet, Binance Smart Chain and Arbitrum):
+### What the development image contains
 
--   `docker-compose --profile eth --profile bsc --profile arb up -d`
+The [4.1.7 worker source](https://github.com/torn-boy/tornado-relayer/tree/4641d9a3af63aac49c45ec2c39117ac0b483ce1f) lives on the [development PR](https://github.com/torn-boy/tornado-relayer/pull/1). The `main` branch contains deployment files. The local builder pins that worker commit and checks its original Yarn lockfile. The original registry no longer serves several historical archives. For this development build, [14 replacement inputs](./tools/mainnet-sources.json) are pinned by SHA-256 and checked against the package names, versions, and dependencies in the original lockfile. Public npm packages are checked against their original Yarn integrity hashes. The result is tagged `localhost/tornado-relayer:4.1.7-dev`. Use this image for local development and review.
 
-2. Visit your domain addresses and check each `/status` endpoint to ensure there is no errors in the `status` fields
-2. Optional: if you want to run Nova relayer, just add `--profile nova` to docker-compose command 
+## Operate an Ethereum mainnet relayer
 
-If you want to change some relayer parameters, for example, RPC url or fee percent, stop the relayer software with command `docker-compose down --remove-orphans`, change in corresponding `.env.{name}` file what you need and rerun relayer as described above.
+An operator needs Ethereum HTTP and WebSocket RPC endpoints, an oracle RPC, a funded worker signer, and a reward address. To appear in the registered relayer list, the worker and reward address must match the operator's registration. Store the private key in the operator's private environment file. For the bundled public HTTPS route, point the hostname at the server and make ports 80 and 443 available.
 
-#### Disclaimer:
+- **Existing 4.1.6 installation.** Follow the [4.1.7 upgrade and rollback guide](https://github.com/torn-boy/tornado-relayer/blob/4641d9a3af63aac49c45ec2c39117ac0b483ce1f/README.md#upgrade-a-running-416-relayer). It builds on your running image, preserving its original dependencies. Upgrade every worker consuming the queue before switching the API to advertise 4.1.7.
+- **New installation.** Use the [4.1.7 source checkout and environment template](https://github.com/torn-boy/tornado-relayer/blob/4641d9a3af63aac49c45ec2c39117ac0b483ce1f/.env.example) and the [new-host image instructions](https://github.com/torn-boy/tornado-relayer/blob/4641d9a3af63aac49c45ec2c39117ac0b483ce1f/README.md#start-on-a-new-host). The original frozen-lockfile build needs the historical package archives or a trusted cache. An operator with a verified 4.1.7 image can also transfer it as described there.
+
+On a fresh deployment, start the services in this order from the **4.1.7 source checkout**, after tagging the operator image for Compose, pulling the infrastructure images and configuring `.env`.
+
+```sh
+docker compose up -d --no-build --pull never redis eth-treeWatcher eth-priceWatcher eth-healthWatcher
+docker compose exec -T redis redis-cli EXISTS tree:elements tree:root
+```
+
+The second command must print `2` before starting the worker. If the tree is still syncing, check `docker compose logs --tail=50 eth-treeWatcher` and repeat the Redis check. The tree watcher requires historical logs and WebSocket subscriptions.
+
+```sh
+docker compose up -d --no-build --pull never eth-worker1
+docker compose logs --tail=50 eth-worker1
+```
+
+Wait for `Worker started` in the current worker's logs. If the worker had already been started with an empty Redis, restart it after the tree check returns `2`. Start the HTTPS proxy services if using the bundled proxy.
+
+```sh
+docker compose up -d --no-build --pull never nginx dockergen letsencrypt
+```
+
+Read `/status` and `/v1/status` at the operator's HTTPS hostname. Check the network, version, configured reward address, populated token prices, and `health.status` equal to `"true"`. The worker log confirms it is consuming jobs. The queue count reports waiting jobs only.
+
+## Existing multi-network deployments
+
+The [deployment Compose file](./docker-compose.yml) on `main` uses profiles and network-specific files such as `.env.eth`, `.env.bsc` and `.env.arb`. The standalone 4.1.7 source checkout uses `.env`. For existing configured sidechains, keep their matching images and configuration files. For example, in an existing BSC deployment use `docker compose --profile bsc up -d --no-build`. Nova uses its own image and `.env.nova`. The 4.1.7 withdrawal fee change applies to Ethereum mainnet.
+
+The historical [install.sh](./install.sh) targets the former upstream host and changes the host firewall and nginx configuration. Use the local build above for this checkout.
+
+## Disclaimer
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

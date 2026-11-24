@@ -1,0 +1,37 @@
+services:
+  api:
+    image: ${RELAYER_DEV_IMAGE:-localhost/tornado-relayer:4.1.7-dev}
+    pull_policy: never
+    command: server
+    environment:
+      NET_ID: "1"
+      APP_PORT: "8000"
+      REDIS_URL: redis://redis/0
+      REWARD_ACCOUNT: "0x0000000000000000000000000000000000000001"
+      REGULAR_TORNADO_WITHDRAW_FEE: "0.4"
+      MINING_SERVICE_FEE: "0.05"
+    ports:
+      - "127.0.0.1:18000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          require('http').get('http://127.0.0.1:8000/status', res => {
+            res.resume()
+            process.exitCode = res.statusCode === 200 ? 0 : 1
+          }).on('error', () => process.exit(1))
+      interval: 3s
+      timeout: 3s
+      retries: 15
+    depends_on:
+      redis:
+        condition: service_healthy
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
