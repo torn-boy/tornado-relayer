@@ -58,11 +58,37 @@ The 4.1.6 and 4.1.7 releases use the same dependency lockfile. You can build the
    docker compose up -d --no-build --pull never --no-deps --force-recreate eth-server
    ```
 
+## Build without the historical package registry
+
+You can build 4.1.7 from a clean checkout using Python 3.12+, Node.js with npm, Yarn Classic 1.x, Git, and Docker. The preparation step downloads public npm tarballs and checks them against the original `yarn.lock`. It also downloads checksum-pinned community archives and rebuilds the missing legacy packages from pinned source commits. The package versions and dependency declarations are checked against the original lockfile. See the [dependency sources](./scripts/offline-build-sources.json).
+
+Run from the checkout root while connected to the internet:
+
+```sh
+build_dir="$(mktemp -d)/context"
+python3 scripts/prepare-offline-build.py "$build_dir"
+docker pull node:16.20.2-bullseye-slim@sha256:503446c15c6236291222f8192513c2eb56a02a8949cbadf4fe78cce19815c734
+```
+
+To reuse downloaded tarballs on a later build, pass `--reuse-archives` with the path to an earlier build context. The script checks each reused archive again.
+
+Build and test with network access disabled for the containers:
+
+```sh
+docker build --pull=false --network=none \
+  -t localhost/tornado-relayer:4.1.7 "$build_dir"
+docker run --rm --network none -e NET_ID=1 \
+  -e REWARD_ACCOUNT=0x0000000000000000000000000000000000000000 \
+  localhost/tornado-relayer:4.1.7 test
+```
+
+The staged lockfile points to local tarballs, and Yarn skips package lifecycle scripts. The image records the source commit and checksums in `/app/build-provenance.json`. The `linux/arm64` image was tested with local Redis and a simulated Ethereum RPC. The API, worker, and all three watchers started, and `/status` reported version `4.1.7` with a healthy status.
+
 ## Start on a new host
 
 Use an image built by your deployment team from the checked-out 4.1.7 source. To transfer the verified image from the upgrade above, run `docker save -o relayer-4.1.7.tar localhost/tornado-relayer:4.1.7` on the build host. Transfer the archive to a host of the same architecture, verify its SHA-256 against the build host's copy, and run `docker load -i relayer-4.1.7.tar`.
 
-For a build from scratch, the standard Dockerfile uses Node 16 and Yarn's frozen lockfile. It needs the exact package archives pinned in `yarn.lock`. The historical package host `git.tornado.ws` returned HTTP 521 during release preparation. A clean build requires that source to be reachable from the builder or an approved build environment that already has the checksum-matching packages. When those dependencies are available, build with `docker build -t localhost/tornado-relayer:4.1.7 "$RELEASE_DIR"`.
+Use the offline build above when starting without an existing image. The standard `Dockerfile` uses the historical tarball URLs pinned in `yarn.lock`.
 
 In the release directory, create `.env` once and fill it in before starting the services.
 
