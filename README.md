@@ -6,7 +6,7 @@ The mainnet worker uses a **0.3 gwei minimum priority fee** for Classic withdraw
 
 ## Run it locally
 
-Install Git, curl 7.71 or later, tar, Python 3.9 or later, and Docker with a running Linux container engine and Compose v2. Run the following in a new directory. The first build downloads the dependencies and the pinned relayer source, so it can take several minutes.
+Install Git, Python 3.9 or later, tar, curl, and Docker with a running Linux container engine and Compose v2. The first build fetches the pinned worker source and its dependencies. Subsequent builds reuse verified downloads from `$XDG_CACHE_HOME/tornado-relayer-417` (default `~/.cache/tornado-relayer-417`).
 
 ```sh
 git clone --branch main --single-branch https://github.com/torn-boy/tornado-relayer.git
@@ -40,32 +40,35 @@ This starts Redis, the API, the worker, and the tree, price, and health watchers
 
 ### What the development image contains
 
-The [4.1.7 worker source](https://github.com/torn-boy/tornado-relayer/tree/4c0ef4b2c0c91831c9d7f3ab24871e93966a6443) lives on the [mainnet-v4 branch](https://github.com/torn-boy/tornado-relayer/tree/mainnet-v4). The `main` branch contains deployment files. The local builder pins that worker commit and checks its original Yarn lockfile. The original registry no longer serves several historical archives. For this development build, [14 replacement inputs](./tools/mainnet-sources.json) are pinned by SHA-256 and checked against the package names, versions, and dependencies in the original lockfile. Public npm packages are checked against their original Yarn integrity hashes. The result is tagged `localhost/tornado-relayer:4.1.7-dev`. Use this image for local development and review.
+The [4.1.7 worker source](https://github.com/torn-boy/tornado-relayer/tree/6adbb587a0ff5b743c056cd6ed75e47042b369ea) lives on the [mainnet-v4 branch](https://github.com/torn-boy/tornado-relayer/tree/mainnet-v4). The `main` branch contains deployment files. The local builder checks out the pinned worker commit and runs its offline preparation script. The release lockfile pins public registry archives, Codeberg archives and the historical packages included in the worker checkout. The script verifies their hashes. Docker installs the verified packages offline and the builder runs the worker tests before tagging `localhost/tornado-relayer:4.1.7-dev`. Set `RELAYER_DEV_IMAGE` to build and preview a different local tag. The source revision and lockfile hashes are recorded in `/app/build-provenance.json` inside the image.
 
 ## Operate an Ethereum mainnet relayer
 
 An operator needs Ethereum HTTP and WebSocket RPC endpoints, an oracle RPC, a funded worker signer, and a reward address. To appear in the registered relayer list, the worker and reward address must match the operator's registration. Store the private key in the operator's private environment file. For the bundled public HTTPS route, point the hostname at the server and make ports 80 and 443 available.
 
-- **Existing 4.1.6 installation.** Follow the [4.1.7 upgrade and rollback guide](https://github.com/torn-boy/tornado-relayer/blob/4c0ef4b2c0c91831c9d7f3ab24871e93966a6443/README.md#upgrade-a-running-416-relayer). It builds on your running image, preserving its original dependencies. Upgrade every worker consuming the queue before switching the API to advertise 4.1.7.
-- **New installation.** Use the [4.1.7 source checkout and environment template](https://github.com/torn-boy/tornado-relayer/blob/4c0ef4b2c0c91831c9d7f3ab24871e93966a6443/.env.example) and the [new-host image instructions](https://github.com/torn-boy/tornado-relayer/blob/4c0ef4b2c0c91831c9d7f3ab24871e93966a6443/README.md#start-on-a-new-host). The original frozen-lockfile build needs the historical package archives or a trusted cache. An operator with a verified 4.1.7 image can also transfer it as described there.
+- **Existing 4.1.6 installation.** Follow the [4.1.7 upgrade and rollback guide](https://github.com/torn-boy/tornado-relayer/blob/6adbb587a0ff5b743c056cd6ed75e47042b369ea/README.md#upgrade-a-running-416-relayer). It builds on your running image, preserving its original dependencies. Upgrade every worker consuming the queue before switching the API to advertise 4.1.7.
+- **New installation.** Use the [4.1.7 source checkout and environment template](https://github.com/torn-boy/tornado-relayer/blob/6adbb587a0ff5b743c056cd6ed75e47042b369ea/.env.example) and the [new-host image instructions](https://github.com/torn-boy/tornado-relayer/blob/6adbb587a0ff5b743c056cd6ed75e47042b369ea/README.md#start-on-a-new-host). The release lockfile and bundled archives support clean builds. The source guide also covers preparing an offline Docker build or transferring a verified operator image.
 
 On a fresh deployment, start the services in this order from the **4.1.7 source checkout**, after tagging the operator image for Compose, pulling the infrastructure images and configuring `.env`.
 
 ```sh
-docker compose up -d --no-build --pull never redis eth-treeWatcher eth-priceWatcher eth-healthWatcher
+docker compose up -d --no-build --pull never redis
+docker compose up -d --no-build --pull never --no-deps eth-treeWatcher eth-priceWatcher eth-healthWatcher
 docker compose exec -T redis redis-cli EXISTS tree:elements tree:root
 ```
 
-The second command must print `2` before starting the worker. If the tree is still syncing, check `docker compose logs --tail=50 eth-treeWatcher` and repeat the Redis check. The tree watcher requires historical logs and WebSocket subscriptions.
+The Redis check must print `2` before starting the worker. If the tree is still syncing, check `docker compose logs --tail=50 eth-treeWatcher` and repeat the Redis check. The tree watcher requires historical logs and WebSocket subscriptions.
 
 ```sh
-docker compose up -d --no-build --pull never eth-worker1
+docker compose up -d --no-build --pull never --no-deps eth-worker1
 docker compose logs --tail=50 eth-worker1
 ```
 
-Wait for `Worker started` in the current worker's logs. If the worker had already been started with an empty Redis, restart it after the tree check returns `2`. Start the HTTPS proxy services if using the bundled proxy.
+Wait for `Worker started` in the current worker's logs. If the worker had already been started with an empty Redis, restart it after the tree check returns `2`. Once the worker is ready, start the API. If you use the bundled HTTPS proxy, start its services as well.
 
 ```sh
+docker compose up -d --no-build --pull never eth-server
+# For the bundled HTTPS proxy
 docker compose up -d --no-build --pull never nginx dockergen letsencrypt
 ```
 
