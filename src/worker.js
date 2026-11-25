@@ -15,6 +15,11 @@ let currentJob
 let txManager
 let tornadoProxyInstance
 const feeOracle = new TornadoFeeOracleV5(netId, httpRpcUrl, gasPrices)
+let feeCheckOracle = feeOracle
+if (netId === 56) {
+  feeCheckOracle = new TornadoFeeOracleV5(netId, httpRpcUrl, gasPrices)
+  feeCheckOracle.oracle.eip1559.configuration.minPriority = 0.3 // gwei, fee validation only
+}
 
 function start() {
   try {
@@ -50,7 +55,7 @@ async function checkTornadoFee({ data }, tx) {
   const userProvidedFee = toBN(data.args[4])
   const { amount, decimals, currency } = getInstance(data.contract)
 
-  const relayerDesiredFee = await feeOracle.calculateWithdrawalFeeViaRelayer({
+  const relayerDesiredFee = await feeCheckOracle.calculateWithdrawalFeeViaRelayer({
     tx,
     txType: 'relayer_withdrawal',
     relayerFeePercent: tornadoServiceFee,
