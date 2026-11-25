@@ -15,6 +15,9 @@ let currentJob
 let txManager
 let tornadoProxyInstance
 const feeOracle = new TornadoFeeOracleV5(netId, httpRpcUrl, gasPrices)
+if (netId === 56) {
+  feeOracle.oracle.eip1559.configuration.minPriority = 0.3 // gwei
+}
 
 function start() {
   try {
