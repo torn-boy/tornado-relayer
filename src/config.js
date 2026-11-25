@@ -2,8 +2,11 @@ require('dotenv').config()
 
 const { jobType } = require('./constants')
 const tornConfig = require('@tornado/tornado-config')
+const netId = Number(process.env.NET_ID) || 1
+
 module.exports = {
-  netId: Number(process.env.NET_ID) || 1,
+  netId,
+  withdrawalMinPriorityFeeWei: netId === 1 ? '300000000' : undefined,
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
   httpRpcUrl: process.env.HTTP_RPC_URL,
   wsRpcUrl: process.env.WS_RPC_URL,

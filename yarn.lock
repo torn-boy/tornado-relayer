@@ -503,8 +503,8 @@
 
 "@tornado/anonymity-mining@^2.1.5":
   version "2.1.5"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fanonymity-mining/-/2.1.5/anonymity-mining-2.1.5.tgz#3cff12798eef18c4fd6e2b0be12153ade44fdb08"
-  integrity sha512-WYvORNwCChBCJnRzbMk5vL2TuJbAs8vdfXpJJC9DDZ5Rg20eCNQzWfbf9UNm+VZuRGHrFz20iUuMUefGpizXnQ==
+  resolved "file:vendor/anonymity-mining-2.1.5.tgz#d081c81b482677542644e20f7637bf99ae1aa07e"
+  integrity sha512-Colw5VGdYThGMV8r/AJfKee8gV0nJrMYyu5wWamiev7cZSCbSss69vscs13/s1ET8GonxeG1AnGpT7LjbtKCYw==
   dependencies:
     "@tornado/circomlib" "^0.0.21"
     "@tornado/fixed-merkle-tree" "0.3.4"
@@ -517,8 +517,8 @@
 
 "@tornado/circomlib@0.0.21", "@tornado/circomlib@^0.0.21":
   version "0.0.21"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fcircomlib/-/0.0.21/circomlib-0.0.21.tgz#fb7a502aa32bcb2b23205a05877d1cd030c41b19"
-  integrity sha512-CFaqfgoWZBdD9xZurVOEalWKEVn/NzsT63W/VLGFRbmAUTYJ1vING9LjC0ZXBvec8vzyYquIkvNRdx6axFdJ5g==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fcircomlib/-/0.0.21/circomlib-0.0.21.tgz#1bfb4abb140cbf1b45d291b73f5e3424ae3952cb"
+  integrity sha512-vcoHkwD8sWgpa9VObO1wwNm1JlYQAJYFb0l9zpS45F0GPZlszn5L5uWthAJz187yTURKoymsXqHjdlK+YJsN0A==
   dependencies:
     "@tornado/snarkjs" "0.1.20"
     blake-hash "^1.1.0"
@@ -528,7 +528,7 @@
 
 "@tornado/fixed-merkle-tree@0.3.4":
   version "0.3.4"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ffixed-merkle-tree/-/0.3.4/fixed-merkle-tree-0.3.4.tgz#16e057ab77ec99949df182a3bed03bee867c9dad"
+  resolved "file:vendor/fixed-merkle-tree-0.3.4.tgz#16e057ab77ec99949df182a3bed03bee867c9dad"
   integrity sha512-HMD2SVMP3G7f7nHkBMC48q8VJNI2t/ZFImzKewNUr6lQ+qyXYP32Ft6ICAeaOjoBAeIU76kfg/ZowED4Iu8iZg==
   dependencies:
     "@tornado/circomlib" "^0.0.21"
@@ -536,7 +536,7 @@
 
 "@tornado/fixed-merkle-tree@^0.4":
   version "0.4.0"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ffixed-merkle-tree/-/0.4.0/fixed-merkle-tree-0.4.0.tgz#2cc4e02e69fd5d91cb18d97ad35e480bb29f8bfa"
+  resolved "file:vendor/fixed-merkle-tree-0.4.0.tgz#2cc4e02e69fd5d91cb18d97ad35e480bb29f8bfa"
   integrity sha512-FNO0UGacuw8gB0mY4bekfWamUb/YD7i7q4D5Jcbo+LnNdGnrJv6LK7aWO21dp54z3qAQum0es4Y4kcIw5oVIHg==
   dependencies:
     "@tornado/circomlib" "^0.0.21"
@@ -544,16 +544,16 @@
 
 "@tornado/fixed-merkle-tree@^0.5.0":
   version "0.5.1"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ffixed-merkle-tree/-/0.5.1/fixed-merkle-tree-0.5.1.tgz#bda51bc964a8ed86ce9735f49d1efe1f32595140"
-  integrity sha512-aMbCrnHLnvGWSr54/oT4IUg7106+F/55APn2uMhEeg0rQk5PXXRgzzqvHgBqyjRpMibKzOT7m7G8SMMVMpXFFg==
+  resolved "file:vendor/fixed-merkle-tree-0.5.1.tgz#25490ea2edff621ba96e7a42ba171cea7a0d0877"
+  integrity sha512-iVSjDOdY6KJFBNq7DbrAHJVfjj+vnkTSYIG2t2QxvmkrVQFvi3B/0erdLfFQUl96cZE6KffsCcg5O5pL7U5PkQ==
   dependencies:
     "@tornado/circomlib" "0.0.21"
     "@tornado/snarkjs" "0.1.20"
 
 "@tornado/gas-price-oracle@^0.5.3":
   version "0.5.3"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz#fb5423dddee2f52edbc16174c5ddce90bea5413d"
-  integrity sha512-LpVfPiPIz3FOmJdiqJf/yoeO5n9/Pd5jgtdY+6hB9lNW0AiWhylhpScojICViS+3OL9QC8CoTlgr+kbfGeO9pQ==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz#2bfecf70437d22e33e8912a04d9e0149bf7b67de"
+  integrity sha512-fHGLKxSMEWY0LtMj8ErRX4NcqTueryYPEmmNzJx+vNydAwx5ecjBQSV4zQPRNPrJdokn5WhLb/1SFGOBqHaSuA==
   dependencies:
     axios "^0.21.2"
     bignumber.js "^9.0.0"
@@ -561,8 +561,8 @@
 
 "@tornado/snarkjs@0.1.20", "@tornado/snarkjs@^0.1.20":
   version "0.1.20"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fsnarkjs/-/0.1.20/snarkjs-0.1.20.tgz#d7610cd3c8dc10598da7dc3e40e5d7470c3aa8c7"
-  integrity sha512-mn+ePoQjqOHyDyK8AMy8SXYqNSxJWVswWVmMYvuc75/9bBtJ7SNtwrTByxmfWjrf4S3BM3IrGfHqBHEXY6gR4Q==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fsnarkjs/-/0.1.20/snarkjs-0.1.20.tgz#715aaf30248fffb9b7a1ee558e9d1b9a765a0e99"
+  integrity sha512-Df0QvExjephUuWYWyXeIEZI91KZv+bBtIk/1aCWNXtglYl7ZnoeU3/BPvfR2JKRLR/WdxcFTXZSdKaIR10JlQg==
   dependencies:
     big-integer "^1.6.43"
     chai "^4.2.0"
@@ -573,18 +573,18 @@
 
 "@tornado/tornado-config@^1":
   version "1.0.8"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-config/-/1.0.8/tornado-config-1.0.8.tgz#f592c2ea5e382e0b945d6ae1fd09354975ca3087"
+  resolved "file:vendor/tornado-config-1.0.8.tgz#f592c2ea5e382e0b945d6ae1fd09354975ca3087"
   integrity sha512-1CakJyl1u/3pYzfg5hHmrcU9Pm38iDGEJ1k27yH4or2LTPASYWJduZmbp35TMtZ4+EP8prJzOsqVYn+rzEHecg==
 
 "@tornado/tornado-config@^2.0.0":
   version "2.0.0"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz#52bbc179ecb2385f71b4d56e060b68e7dd6fb8b4"
-  integrity sha512-7EkpWNfEm34VEOrbLnPpvd/aUJYnA1L+6/qx2fZ/AfmuJFkjSZ18Z4jvVGNY7ktKIhTu3/Tbze+9l3eNueCNIA==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz#0ab73fae5d6b95712396479911c6da9a6b407c89"
+  integrity sha512-HRcZtzKhVOhsotiuguGe0UMb/30nqFweRw+3PmnULLxKrXKV6zH9V1jj2R+6TBAeXFJwr8Yhe16BdHvG2/7SRg==
 
 "@tornado/tornado-oracles@1.2.2":
   version "1.2.2"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-oracles/-/1.2.2/tornado-oracles-1.2.2.tgz#454be0f34b27aa659b2d590dfbcd721246545a16"
-  integrity sha512-JJoUAkQLV7bVrU2YMFt9d+TB5BovrvQubg8n0V0ZGcTDv/bz2H3EWwStz6Tvl+wUAnPuNnEeS934vkOvgFtEew==
+  resolved "file:vendor/tornado-oracles-1.2.2.tgz#18c8286c3b3d79d1e3597a64e28bae2a08cc5b1d"
+  integrity sha512-sHJn+WCUNoldWsnN8sfQMmXu1LH4Rv/LLw3mn0z35xbFZRdj0yqUCopJ2KyDC4sBa0fCkesdsVzLgtK4vTv7Nw==
   dependencies:
     "@tornado/gas-price-oracle" "^0.5.3"
     "@tornado/tornado-config" "^2.0.0"
@@ -594,8 +594,8 @@
 
 "@tornado/trees@^0.0.11":
   version "0.0.11"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftrees/-/0.0.11/trees-0.0.11.tgz#3791e5c9e5ab6b96aa7daf95f09d957f19e5f61d"
-  integrity sha512-O2wcU7qjedN9HH0U4HzJJQ8FSsVVGtfgHMdib1+UnJN3tTFPsRBALy1KKi8ZiHRYwJxQ3l2siFbDZPcR5vvGLA==
+  resolved "file:vendor/trees-0.0.11.tgz#8352fb005a248a7d5c474d4f98e64e940e83d24f"
+  integrity sha512-YCIQSTrhEMQcVo1Qa9Z+2dV/5plXxvHT5+oTn9siAchEodDXZu//3MioynuZB9ZnZ30UK0bh9tVC02VDe4LB4A==
   dependencies:
     "@openzeppelin/contracts" "^3.4.0"
     "@openzeppelin/upgrades-core" "^1.5.1"
@@ -612,8 +612,8 @@
 
 "@tornado/tx-manager@^0.4.9":
   version "0.4.9"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz#075add158e3c01da1b34bbcd68ba764491746ceb"
-  integrity sha512-0j6bquM/gB6JZvm2nv2y1Xo35IvsZcjQ0BMlvoH8OZYa1dzXQCiNBKSlNOIBOFMsOklUXHNE1JmQpko+rTgXOA==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz#8f4cb72634b51cdad13112cd1171b2ed35c585e5"
+  integrity sha512-sdIflHE9mxKYgSnvUHSb80d21eWWhTjvKgLEcufbHr5V8Y2VnC+kJqRDlZNA2FtJcB769taFC6OeRkaGnE5y5g==
   dependencies:
     "@tornado/gas-price-oracle" "^0.5.3"
     async-mutex "^0.2.4"
@@ -622,8 +622,8 @@
 
 "@tornado/websnark@^0.0.4":
   version "0.0.4"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fwebsnark/-/0.0.4/websnark-0.0.4.tgz#4c603259b71172225a70e3d454344fa172710970"
-  integrity sha512-dHbaS41ILPq5NyVBDW8AmUPoSKvamtkTeIhyuKKmoyOrZMAUhJ9y1B2zRcejUKfhCZkIjAgCt9bvdzdOGGswwQ==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fwebsnark/-/0.0.4/websnark-0.0.4.tgz#c15196db16e8c5965bd7c9938692b4289fd4e284"
+  integrity sha512-TZ2xanChs6CWCze2VfwlPbTbExdEblHZN8qKAXKAF1F5wkKfh4AZAUN+BnkSIWhc1eXJV/YPU74tQfgmFt5v7g==
   dependencies:
     "@tornado/snarkjs" "^0.1.20"
     big-integer "1.6.42"
@@ -1006,9 +1006,10 @@ blake2b-wasm@^2.4.0:
     b4a "^1.0.1"
     nanoassert "^2.0.0"
 
-"blake2b-wasm@https://github.com/jbaylina/blake2b-wasm.git":
+"blake2b-wasm@file:vendor/blake2b-wasm-2.1.0.tgz", "blake2b-wasm@https://github.com/jbaylina/blake2b-wasm.git":
   version "2.1.0"
-  resolved "https://github.com/jbaylina/blake2b-wasm.git#0d5f024b212429c7f50a7f533aa3a2406b5b42b3"
+  resolved "file:vendor/blake2b-wasm-2.1.0.tgz#25cb8355ed81accba21fd991ec2cc55d23819e76"
+  integrity sha512-2Y66ov9/A4E6uKmwrrUFW96kIshZxiwtSmy1ckICuefuh+ufk3q/wnbZdoYmZuRX4kLHBz+VTZxlSa9EyyrrpA==
   dependencies:
     nanoassert "^1.0.0"
 

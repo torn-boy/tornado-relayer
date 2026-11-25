@@ -1,0 +1,134 @@
+{
+  "typescript": {
+    "url": "https://registry.npmjs.org/typescript/-/typescript-5.1.6.tgz",
+    "sha256": "39247cdcfec56456849449813197cd96b4b19b81b783e746bb8e5f9f5ec87311"
+  },
+  "packages": {
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fanonymity-mining/-/2.1.5/anonymity-mining-2.1.5.tgz#3cff12798eef18c4fd6e2b0be12153ade44fdb08": {
+      "name": "@tornado/anonymity-mining",
+      "version": "2.1.5",
+      "url": "https://codeberg.org/api/v1/repos/torndao/anonymity-mining/archive/427ebea84bdf618d65400358ec0163c78559d243.tar.gz",
+      "sha256": "b0803d7ac775e5f1680b3fe0c57f154acdb968be5ba8bbb683e6bc9eb2222db9",
+      "format": "source",
+      "installResolution": "file:vendor/anonymity-mining-2.1.5.tgz#d081c81b482677542644e20f7637bf99ae1aa07e",
+      "archiveSha256": "5ed6d16fdc1d03911991119e158acfe63911c7dc2eb6fa90fae8693b4bc77a10"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fcircomlib/-/0.0.21/circomlib-0.0.21.tgz#fb7a502aa32bcb2b23205a05877d1cd030c41b19": {
+      "name": "@tornado/circomlib",
+      "version": "0.0.21",
+      "url": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fcircomlib/-/0.0.21/circomlib-0.0.21.tgz",
+      "sha256": "d118379a61b6301ca1a5b7a9239ebc3c3de38416bc45439a63f24784c4b8e2df",
+      "format": "npm",
+      "installResolution": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fcircomlib/-/0.0.21/circomlib-0.0.21.tgz#1bfb4abb140cbf1b45d291b73f5e3424ae3952cb",
+      "archiveSha256": "d118379a61b6301ca1a5b7a9239ebc3c3de38416bc45439a63f24784c4b8e2df"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ffixed-merkle-tree/-/0.3.4/fixed-merkle-tree-0.3.4.tgz#16e057ab77ec99949df182a3bed03bee867c9dad": {
+      "name": "@tornado/fixed-merkle-tree",
+      "version": "0.3.4",
+      "url": "https://codeberg.org/api/v1/repos/torndao/fixed-merkle-tree/archive/9cf202ce364bee16e115b40f8e2707f4f5a3e352.tar.gz",
+      "sha256": "802aec2a0aba3b7e7e4efb6f17b41c5150d3524c81d697293fbf79bc32b6d34d",
+      "format": "source",
+      "installResolution": "file:vendor/fixed-merkle-tree-0.3.4.tgz#16e057ab77ec99949df182a3bed03bee867c9dad",
+      "archiveSha256": "9740a594e9519eab56d055a317a37c1332123ddffa8bb51294533284df0aacfd"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ffixed-merkle-tree/-/0.4.0/fixed-merkle-tree-0.4.0.tgz#2cc4e02e69fd5d91cb18d97ad35e480bb29f8bfa": {
+      "name": "@tornado/fixed-merkle-tree",
+      "version": "0.4.0",
+      "url": "https://codeberg.org/api/v1/repos/torndao/fixed-merkle-tree/archive/c79653ccba506273cd1093a79a6a92889230ad69.tar.gz",
+      "sha256": "1a4e80027473a3d036925102e55c5b59e0165a1058e11884bd46f7f31cd07dc4",
+      "format": "source",
+      "installResolution": "file:vendor/fixed-merkle-tree-0.4.0.tgz#2cc4e02e69fd5d91cb18d97ad35e480bb29f8bfa",
+      "archiveSha256": "597c149fcc9b9fab253ed516850e7ff3340c04d1b075a854ad3c0b315a8fed3b"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ffixed-merkle-tree/-/0.5.1/fixed-merkle-tree-0.5.1.tgz#bda51bc964a8ed86ce9735f49d1efe1f32595140": {
+      "name": "@tornado/fixed-merkle-tree",
+      "version": "0.5.1",
+      "url": "https://codeberg.org/api/v1/repos/torndao/fixed-merkle-tree/archive/c89146c3e5e2db4e31d6811bfe3fb5e063f96a31.tar.gz",
+      "sha256": "6709cd82a925eb251480dfe327649f3f102aef174b00d66eb2dff3cffda0d633",
+      "format": "source",
+      "installResolution": "file:vendor/fixed-merkle-tree-0.5.1.tgz#25490ea2edff621ba96e7a42ba171cea7a0d0877",
+      "archiveSha256": "3a5f03735ba368d5f98d69542e0c7df487b71615b302cb478ec895c9575bbdf4"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz#fb5423dddee2f52edbc16174c5ddce90bea5413d": {
+      "name": "@tornado/gas-price-oracle",
+      "version": "0.5.3",
+      "url": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz",
+      "sha256": "0a36db1d34d5e2b7bb6a542d8440250e7b650293b3d8f157484175f5a140ccf9",
+      "format": "npm",
+      "installResolution": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz#2bfecf70437d22e33e8912a04d9e0149bf7b67de",
+      "archiveSha256": "0a36db1d34d5e2b7bb6a542d8440250e7b650293b3d8f157484175f5a140ccf9"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fsnarkjs/-/0.1.20/snarkjs-0.1.20.tgz#d7610cd3c8dc10598da7dc3e40e5d7470c3aa8c7": {
+      "name": "@tornado/snarkjs",
+      "version": "0.1.20",
+      "url": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fsnarkjs/-/0.1.20/snarkjs-0.1.20.tgz",
+      "sha256": "3a312b4153bb3ce8a160f058bb198dbc4c5d8b8d9d3a1b35cd6d568f98992a3d",
+      "format": "npm",
+      "installResolution": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fsnarkjs/-/0.1.20/snarkjs-0.1.20.tgz#715aaf30248fffb9b7a1ee558e9d1b9a765a0e99",
+      "archiveSha256": "3a312b4153bb3ce8a160f058bb198dbc4c5d8b8d9d3a1b35cd6d568f98992a3d"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-config/-/1.0.8/tornado-config-1.0.8.tgz#f592c2ea5e382e0b945d6ae1fd09354975ca3087": {
+      "name": "@tornado/tornado-config",
+      "version": "1.0.8",
+      "url": "https://codeberg.org/api/v1/repos/torndao/tornado-config/archive/ba385b7da9eccd67a2b3f05fb305aab4898d33c2.tar.gz",
+      "sha256": "7411ea02541ff680617df84ea359aa8e0e21971315457b81e79e046e8c83b2b0",
+      "format": "source",
+      "installResolution": "file:vendor/tornado-config-1.0.8.tgz#f592c2ea5e382e0b945d6ae1fd09354975ca3087",
+      "archiveSha256": "60b5e6406af61e6eaa298fe9bdb507b6e837263682437db452da3279400f6e28"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz#52bbc179ecb2385f71b4d56e060b68e7dd6fb8b4": {
+      "name": "@tornado/tornado-config",
+      "version": "2.0.0",
+      "url": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz",
+      "sha256": "a8fbab20094ba4c4ef4ee1ae12f5b65d677b718a35b1fb865383fef1364de4f0",
+      "format": "npm",
+      "installResolution": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz#0ab73fae5d6b95712396479911c6da9a6b407c89",
+      "archiveSha256": "a8fbab20094ba4c4ef4ee1ae12f5b65d677b718a35b1fb865383fef1364de4f0"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-oracles/-/1.2.2/tornado-oracles-1.2.2.tgz#454be0f34b27aa659b2d590dfbcd721246545a16": {
+      "name": "@tornado/tornado-oracles",
+      "version": "1.2.2",
+      "url": "https://codeberg.org/api/v1/repos/torndao/tornado-oracles/archive/de369f405c6838d3622362ce6d83c9039ab4acc7.tar.gz",
+      "sha256": "1741fc7652c2d57fc078c1458d00bb5666e9f58286c890ac874bb2d6a9c4bffd",
+      "format": "source",
+      "installResolution": "file:vendor/tornado-oracles-1.2.2.tgz#18c8286c3b3d79d1e3597a64e28bae2a08cc5b1d",
+      "archiveSha256": "97187008318d9c24c30716c3acc1efce3c457e16728a8acfcacc3c63ba29b5de"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftrees/-/0.0.11/trees-0.0.11.tgz#3791e5c9e5ab6b96aa7daf95f09d957f19e5f61d": {
+      "name": "@tornado/trees",
+      "version": "0.0.11",
+      "url": "https://codeberg.org/api/v1/repos/torndao/tornado-trees/archive/02642f122d41f0994783a6a201d20459b6f10b64.tar.gz",
+      "sha256": "001d47b5ce3b749196d7d8c6b4e28824b957a69a7c3aabf189d835381b5ea55e",
+      "format": "source",
+      "installResolution": "file:vendor/trees-0.0.11.tgz#8352fb005a248a7d5c474d4f98e64e940e83d24f",
+      "archiveSha256": "99f782b2684f5eccaa29a24d6d7e94985f60138cd0d340202770211a48159297"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz#075add158e3c01da1b34bbcd68ba764491746ceb": {
+      "name": "@tornado/tx-manager",
+      "version": "0.4.9",
+      "url": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz",
+      "sha256": "34284dd11ed721c6b154731ba9707841dd6ed5558f5f7919fb90265c11657dfd",
+      "format": "npm",
+      "installResolution": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz#8f4cb72634b51cdad13112cd1171b2ed35c585e5",
+      "archiveSha256": "34284dd11ed721c6b154731ba9707841dd6ed5558f5f7919fb90265c11657dfd"
+    },
+    "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fwebsnark/-/0.0.4/websnark-0.0.4.tgz#4c603259b71172225a70e3d454344fa172710970": {
+      "name": "@tornado/websnark",
+      "version": "0.0.4",
+      "url": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fwebsnark/-/0.0.4/websnark-0.0.4.tgz",
+      "sha256": "48ca4ac8ee0a39b232a584ede5d155adc31a5f25ebf9abd33d1b800bc54a4ea5",
+      "format": "npm",
+      "installResolution": "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fwebsnark/-/0.0.4/websnark-0.0.4.tgz#c15196db16e8c5965bd7c9938692b4289fd4e284",
+      "archiveSha256": "48ca4ac8ee0a39b232a584ede5d155adc31a5f25ebf9abd33d1b800bc54a4ea5"
+    },
+    "https://github.com/jbaylina/blake2b-wasm.git#0d5f024b212429c7f50a7f533aa3a2406b5b42b3": {
+      "name": "blake2b-wasm",
+      "version": "2.1.0",
+      "url": "https://codeload.github.com/jbaylina/blake2b-wasm/tar.gz/0d5f024b212429c7f50a7f533aa3a2406b5b42b3",
+      "sha256": "6433f0f6ad0fdc3aafc135dd2e884501737a129dbdbbe5d7beea6fbb72ea758c",
+      "format": "source",
+      "installResolution": "file:vendor/blake2b-wasm-2.1.0.tgz#25cb8355ed81accba21fd991ec2cc55d23819e76",
+      "archiveSha256": "f77513dd0dae71a47b13066107996281ad2ff7827856fcc067b15df3e563d4a7"
+    }
+  }
+}

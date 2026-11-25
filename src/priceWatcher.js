@@ -1,4 +1,4 @@
-const { setSafeInterval, RelayerError, logRelayerError } = require('./utils')
+const { setSafeInterval, logRelayerError } = require('./utils')
 const { redis } = require('./modules/redis')
 const { TokenPriceOracle } = require('@tornado/tornado-oracles')
 const { oracleRpcUrl } = require('./config')

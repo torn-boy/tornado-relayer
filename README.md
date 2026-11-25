@@ -1,100 +1,185 @@
-# Relayer for Tornado Cash [![Build Status](https://github.com/tornadocash/relayer/workflows/build/badge.svg)](https://github.com/tornadocash/relayer/actions) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/tornadocash/relayer?logo=docker&logoColor=%23FFFFFF&sort=semver)](https://hub.docker.com/repository/docker/tornadocash/relayer)
+# Tornado Cash Classic relayer for Ethereum mainnet
 
-__*Tornado Cash was sanctioned by the US Treasury on 08/08/2022, this makes it illegal for US citizens to interact with Tornado Cash and all of it's associated deployed smart contracts. Please understand the laws where you live and take all necessary steps to protect and anonymize yourself.__
+Version **4.1.7** lowers the priority fee floor for Classic withdrawals from 3 to **0.3 gwei**. For both withdrawal fee validation and initial transaction pricing, the worker uses the higher of the floor and the network priority fee estimate accepted by the oracle. If the oracle rejects an extreme estimate, its existing fallback applies. The relayer service fee is configured separately. Clients can identify the running release from the `version` field on `/status` or `/v1/status`.
 
-__*It is recommended to run your Relayer on a VPS instance ([Virtual Private Server](https://njal.la/)). Ensure SSH configuration is enabled for security, you can find information about SSH keygen and management [here](https://www.ssh.com/academy/ssh/keygen).__
+## Get the 4.1.7 source
 
-## Deploy with docker-compose (recommended)
+From a directory separate from your running installation, check out the release branch. Keep your current Compose project, environment file and Redis volume in place if upgrading. The commands below use Docker Engine, Docker Compose v2, Git, curl and jq.
 
-*The following instructions are for Ubuntu 22.10, other operating systems may vary. These instructions include automated SSL configuration with LetsEncrypt.*
-
-__PREREQUISITES__
-1. Update core dependencies 
-  - `sudo apt-get update` 
-2. Install docker-compose
-  - `curl -SL https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose`
-3. Install Docker
-  - `curl -fsSL https://get.docker.com -o get-docker.sh && chmod +x get-docker.sh && ./get-docker.sh` 
-4. Install git
-  - `sudo apt-get install git-all` 
-5. Install nginx
-  - `sudo apt install nginx` 
-6. Stop apache2 instance (enabled by default)
-  - `sudo systemctl stop apache2`
-
-__FIREWALL CONFIGURATION__ 
-
-_* Warning: Failure to configure SSH as the first UFW rule, will lock you out of the instance_ 
-
-1. Make sure UFW is installed by running `apt update` and `apt install ufw` 
-2. Allow SSH in the first position in UFW by running `ufw insert 1 allow ssh`*
-3. Allow HTTP, and HTTPS by running `ufw allow https/tcp/http`
-4. Finalize changes and enable firewall `ufw enable`
-
-__DEPLOYMENT__
-1. Clone the repository and enter the directory 
-  - `git clone https://git.tornado.ws/tornadocash/classic-relayer -b mainnet-v4 && cd classic-relayer`
-2. Clone the example environment file `.env.example` to configure for the preferred network - `cp .env.example .env` , then fill `.env` file.
-  - Set `PRIVATE_KEY` for your relayer address (remove the 0x from your private key)
-  - Set `VIRTUAL_HOST` and `LETSENCRYPT_HOST` to your domain address
-    - add a A  record DNS record with the value assigned to your instance IP address to configure the domain
-  - Set `RELAYER_FEE` to what you would like to charge as your fee (remember 0.3% is deducted from your staked relayer balance)
-  - Set `RPC_URL` to a non-censoring RPC endpoint (You can [run your own](https://github.com/feshchenkod/rpc-nodes), or use a [free option](https://chainnodes.org/))
-  - Set `ORACLE_RPC_URL` to an Ethereum native RPC endpoint
-
-4. Uncomment the `env_file` lines (remove `# `) for the associated network services in `docker-compose.yml`
-5. Build and deploy the docker source by specifying the network through:
-
-  - `npm run build`
-  - `docker-compose up -d`
-5. Visit your domain address and check the `/status` endpoint and ensure there is no errors in the `status` field
-
-__NGINX REVERSE PROXY__
-1. Copy the pre-modified nginx policy as your default policy 
-  - `cp tornado.conf /etc/nginx/sites-available/default` 
-2. Append the default nginx configuration to include streams
-  - `echo "stream {  map_hash_bucket_size 128;  map_hash_max_size 128;  include /etc/nginx/conf.d/streams/*.conf; }" >> /etc/nginx/nginx.conf`
-3. Create the stream configuration
-  - `mkdir /etc/nginx/conf.d/streams && cp tornado-stream.conf /etc/nginx/conf.d/streams/tornado-stream.conf`
-4. Start nginx to make sure the configuration is correct 
-  - `sudo systemctl restart nginx`
-5. Stop nginx
-  - `sudo systemctl stop nginx`
-
-## Run locally
-
-1. `npm i`
-2. `cp .env.example .env`
-3. Modify `.env` as needed
-4. `npm run start`
-5. Go to `http://127.0.0.1:8000`
-6. In order to execute withdraw request, you can run following command
-
-```bash
-curl -X POST -H 'content-type:application/json' --data '<input data>' http://127.0.0.1:8000/relay
+```sh
+git clone --single-branch --branch mainnet-v4 \
+  https://github.com/torn-boy/tornado-relayer.git tornado-relayer-4.1.7
+cd tornado-relayer-4.1.7
+export RELEASE_DIR="$(pwd -P)"
+jq -e '.version == "4.1.7"' package.json
+git rev-parse HEAD
 ```
 
-Relayer should return a transaction hash.
+Continue once the version check prints `true`. Record the commit shown for your deployment.
 
-_Note._ If you want to change contracts' addresses go to [config.js](./config.js) file.
+## Upgrade a running 4.1.6 relayer
 
-## Input data example
+Use the **image ID of your running 4.1.6 worker** to reuse its installed dependencies. The upgrade Dockerfile verifies the base version, the SHA-256 of the original 4.1.6 lockfile, and the installed fee oracle and transaction manager versions. It then copies the 4.1.7 code and its updated lockfile without installing packages. If your base image fails these checks, use the clean build below.
 
-```json
-{
-  "proof": "0x0f8cb4c2ca9cbb23a5f21475773e19e39d3470436d7296f25c8730d19d88fcef2986ec694ad094f4c5fff79a4e5043bd553df20b23108bc023ec3670718143c20cc49c6d9798e1ae831fd32a878b96ff8897728f9b7963f0d5a4b5574426ac6203b2456d360b8e825d8f5731970bf1fc1b95b9713e3b24203667ecdd5939c2e40dec48f9e51d9cc8dc2f7f3916f0e9e31519c7df2bea8c51a195eb0f57beea4924cb846deaa78cdcbe361a6c310638af6f6157317bc27d74746bfaa2e1f8d2e9088fd10fa62100740874cdffdd6feb15c95c5a303f6bc226d5e51619c5b825471a17ddfeb05b250c0802261f7d05cf29a39a72c13e200e5bc721b0e4c50d55e6",
-  "args": [
-    "0x1579d41e5290ab5bcec9a7df16705e49b5c0b869095299196c19c5e14462c9e3",
-    "0x0cf7f49c5b35c48b9e1d43713e0b46a75977e3d10521e9ac1e4c3cd5e3da1c5d",
-    "0x03ebd0748aa4d1457cf479cce56309641e0a98f5",
-    "0xbd4369dc854c5d5b79fe25492e3a3cfcb5d02da5",
-    "0x000000000000000000000000000000000000000000000000058d15e176280000",
-    "0x0000000000000000000000000000000000000000000000000000000000000000"
-  ],
-  "contract": "0xA27E34Ad97F171846bAf21399c370c9CE6129e0D"
-}
+1. In the same shell, change back to the directory you normally use for `docker compose` on the running relayer. Use its usual project name, Compose files and profiles, so the commands address the existing workers and queue. The examples use the supplied worker name `eth-worker1`.
+
+2. Build and check the candidate image. The tag ending in `4.1.6` retains the original image for rollback.
+
+   ```sh
+   (
+     set -eu
+     worker_id="$(docker compose ps -q eth-worker1)"
+     test -n "$worker_id"
+     base_image="$(docker inspect --format '{{.Image}}' "$worker_id")"
+     base_tag="localhost/tornado-relayer:base-${base_image#sha256:}"
+     docker image tag "$base_image" "$base_tag"
+     docker build --pull=false --network=none \
+       --build-arg RELAYER_BASE_IMAGE="$base_tag" \
+       -f "$RELEASE_DIR/Dockerfile.upgrade" \
+       -t localhost/tornado-relayer:4.1.7 "$RELEASE_DIR"
+     docker run --rm --network none --entrypoint node localhost/tornado-relayer:4.1.7 \
+       -e 'require("assert").strictEqual(require("./package.json").version, "4.1.7")'
+     docker image tag "$base_image" localhost/tornado-relayer:4.1.6
+   )
+   ```
+
+3. Once the build and checks succeed, let active withdrawals finish. The supplied Compose file uses one local image tag for all Ethereum services. Recreate the workers and watchers first, keeping Redis and the API running. Include **every** worker consuming this queue if you run more than one. For workers on other hosts, transfer the same image to each host first.
+
+   ```sh
+   docker image tag localhost/tornado-relayer:4.1.7 tornadocash/relayer:mainnet-v4
+   docker compose up -d --no-build --pull never --no-deps --force-recreate \
+     eth-treeWatcher eth-priceWatcher eth-healthWatcher eth-worker1
+   docker compose logs --tail=50 eth-worker1
+   ```
+
+4. Wait for `Worker started` in each recreated worker's logs. Then switch the API so it advertises 4.1.7 only after the workers can accept the new fees.
+
+   ```sh
+   docker compose up -d --no-build --pull never --no-deps --force-recreate eth-server
+   ```
+
+## Build without the historical package registry
+
+From the checkout root, use the standard Dockerfile to build from an empty install cache and run the tests:
+
+```sh
+docker build --no-cache -t localhost/tornado-relayer:4.1.7 .
+docker run --rm --network none localhost/tornado-relayer:4.1.7 test
 ```
 
-Disclaimer:
+The release lockfile keeps the same package versions. Six historical downloads now use Codeberg package archives. Seven packages are included in `vendor/` as tarballs rebuilt from pinned source commits. An eighth tarball supplies the Git revision of `blake2b-wasm` required by `snarkjs`. Yarn verifies the replacement archives against the release lockfile. The [dependency manifest](./scripts/offline-build-sources.json) records the original URLs, replacement sources and checksums.
+
+### Build an offline image
+
+On a connected preparation host with Python 3.9+, Git, tar and Docker, run the following commands from the release checkout. The script reads the committed files at `HEAD`, downloads the remaining archives and checks them against the release lockfile.
+
+```sh
+build_dir="$(mktemp -d)/context"
+python3 scripts/prepare-offline-build.py "$build_dir"
+docker pull node:16.20.2-bullseye-slim@sha256:503446c15c6236291222f8192513c2eb56a02a8949cbadf4fe78cce19815c734
+```
+
+To reuse downloaded tarballs on a later build, pass `--reuse-archives` with the path to an earlier build context. The script checks each reused archive again.
+
+Build and test with network access disabled for the containers:
+
+```sh
+docker build --pull=false --network=none \
+  -t localhost/tornado-relayer:4.1.7 "$build_dir"
+docker run --rm --network none -e NET_ID=1 \
+  -e REWARD_ACCOUNT=0x0000000000000000000000000000000000000000 \
+  localhost/tornado-relayer:4.1.7 test
+```
+
+The staged lockfile points to local tarballs, and Yarn skips package lifecycle scripts. The offline image records the source commit and checksums in `/app/build-provenance.json`.
+
+## Start on a new host
+
+Use an image built by your deployment team from the checked-out 4.1.7 source. To transfer the verified image from the upgrade above, run `docker save -o relayer-4.1.7.tar localhost/tornado-relayer:4.1.7` on the build host. Transfer the archive to a host of the same architecture, verify its SHA-256 against the build host's copy, and run `docker load -i relayer-4.1.7.tar`.
+
+In the release directory, create `.env` once and fill it in before starting the services. The example uses `https://ethereum-rpc.publicnode.com` for both HTTP settings and `wss://ethereum-rpc.publicnode.com` for WebSocket access. You can also use your own mainnet provider. Its WebSocket endpoint must support historical log queries and subscriptions.
+
+```sh
+cd "$RELEASE_DIR"
+test -e .env || (umask 077 && cp .env.example .env)
+```
+
+| Setting                            | Value for Ethereum mainnet                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| `HTTP_RPC_URL`, `ORACLE_RPC_URL`   | Ethereum mainnet HTTP endpoints for chain access and gas estimation               |
+| `WS_RPC_URL`                       | Ethereum mainnet WebSocket endpoint with event subscriptions for the tree watcher |
+| `PRIVATE_KEY`                      | Worker signing key without `0x`. The health check requires at least 0.5 ETH       |
+| `REWARD_ACCOUNT`                   | The registered relayer reward address                                             |
+| `REGULAR_TORNADO_WITHDRAW_FEE`     | Service fee percentage. For example, `0.4` means 0.4%                             |
+| `VIRTUAL_HOST`, `LETSENCRYPT_HOST` | The public hostname pointing to this server, for the bundled HTTPS proxy          |
+
+The Compose services set `NET_ID=1` and use their shared Redis service. Keep `APP_PORT=8000` for the supplied image and proxy. For this standalone stack, the bundled proxy needs ports 80 and 443 available. If you already operate a proxy, route it to the API using your existing deployment configuration.
+
+```sh
+docker image tag localhost/tornado-relayer:4.1.7 tornadocash/relayer:mainnet-v4
+docker compose config --quiet
+docker compose pull redis nginx dockergen letsencrypt
+docker compose up -d --no-build --pull never redis
+docker compose up -d --no-build --pull never --no-deps eth-treeWatcher eth-priceWatcher eth-healthWatcher
+docker compose logs -f eth-treeWatcher
+```
+
+On a fresh Redis volume, wait for `Rebuilt tree with … elements`. The watcher has then checked its root against the mainnet contract. Press Ctrl-C to leave the log view. The following Redis check should print `2` before you start the worker.
+
+```sh
+docker compose exec -T redis redis-cli EXISTS tree:elements tree:root
+docker compose up -d --no-build --pull never --no-deps eth-worker1
+docker compose logs -f eth-worker1
+```
+
+Once the worker logs `Worker started`, press Ctrl-C, then start the API and bundled proxy:
+
+```sh
+docker compose up -d --no-build --pull never eth-server nginx dockergen letsencrypt
+docker compose ps
+```
+
+## Verify the running service
+
+Run this against the public hostname used by the frontend. Replace the example hostname with your own.
+
+```sh
+RELAYER_URL=https://relayer.example.org
+curl -fsS "$RELAYER_URL/status" | jq -e '
+  select(.netId == 1 and .version == "4.1.7")
+  | {netId, version, health, currentQueue}'
+```
+
+A match prints the version, network, health and queue information. Check `health` and the worker logs before accepting traffic.
+
+## Roll back an upgrade
+
+If you need to restore the saved image, switch the HTTP server first to withdraw the 4.1.7 advertisement. Allow the upgraded workers to finish outstanding low-fee jobs. Then recreate all workers and watchers with the saved image, using the same Compose project and Redis volume.
+
+```sh
+docker image tag localhost/tornado-relayer:4.1.6 tornadocash/relayer:mainnet-v4
+docker compose up -d --no-build --pull never --no-deps --force-recreate eth-server
+# After the outstanding jobs have finished:
+docker compose up -d --no-build --pull never --no-deps --force-recreate \
+  eth-treeWatcher eth-priceWatcher eth-healthWatcher eth-worker1
+```
+
+## API
+
+`GET /status` and `GET /v1/status` return the same JSON. A valid `POST /v1/tornadoWithdraw` request queues the withdrawal and returns a job `id`. Use `GET /v1/jobs/:id` to check its progress. See the [routes](./src/router.js), [request validator](./src/modules/validator.js) and [relayer configuration](./src/config.js).
+
+## Run from source for development
+
+With Node 16, Yarn Classic and a separate development `.env`, you can run the processes directly. Native dependencies may require Python 3, Make and a C++ compiler. For local Redis, set `REDIS_URL=redis://127.0.0.1:6379`. Use a separate Compose project for development.
+
+```sh
+yarn install --frozen-lockfile
+docker compose up -d redis
+yarn concurrently "yarn treeWatcher" "yarn priceWatcher" "yarn healthWatcher"
+```
+
+After the tree watcher logs `Rebuilt tree with … elements`, run `yarn worker` in a second terminal. Once it logs `Worker started`, run `yarn server` in a third terminal. The local API listens at `http://127.0.0.1:8000/status` with the example port.
+
+## Disclaimer
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
