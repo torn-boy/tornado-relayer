@@ -10,7 +10,7 @@ RUN mkdir /tmp/compiler && tar xzf typescript.tgz -C /tmp/compiler \
     && node /tmp/compiler/package/bin/tsc -p tsconfig.esm.json
 
 FROM node:16.20.2-bullseye-slim@sha256:503446c15c6236291222f8192513c2eb56a02a8949cbadf4fe78cce19815c734
-LABEL org.opencontainers.image.revision="4641d9a3af63aac49c45ec2c39117ac0b483ce1f"
+LABEL org.opencontainers.image.revision="4c0ef4b2c0c91831c9d7f3ab24871e93966a6443"
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY package.json yarn.lock ./

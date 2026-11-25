@@ -13,7 +13,7 @@ import tarfile
 import tempfile
 
 TOOLS = Path(__file__).resolve().parent
-REVISION = "4641d9a3af63aac49c45ec2c39117ac0b483ce1f"
+REVISION = "4c0ef4b2c0c91831c9d7f3ab24871e93966a6443"
 LOCK_SHA256 = "f12ad7595b40997d91c01ac7daf1a746c8ffee351c52ce88e6d22c7afe7214f7"
 CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "tornado-relayer-417"
 SOURCES = json.loads((TOOLS / "mainnet-sources.json").read_text())
