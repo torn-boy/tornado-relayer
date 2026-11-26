@@ -1,116 +1,65 @@
-# Relayer for Tornado Cash [![Build Status](https://github.com/tornadocash/relayer/workflows/build/badge.svg)](https://github.com/tornadocash/relayer/actions) ![Static Badge](https://img.shields.io/badge/version-5.1.0-blue?logo=docker)
+# Tornado Cash sidechain relayer 5.2.3
 
-***Tornado Cash was sanctioned by the US Treasury on  08/08/2022, this makes it illegal for US citizens to interact with  Tornado Cash and all of it's associated deployed smart contracts. Please understand the laws where you live and take all necessary steps to  protect and anonymize yourself.**
+For the U.S. Treasury’s designation history, see its [March 2025 Tornado Cash delisting notice](https://ofac.treasury.gov/recent-actions/20250321).
 
-***It is recommended to run your Relayer on a VPS instance ([Virtual Private Server](https://njal.la/)). Ensure SSH configuration is enabled for security, you can find information about SSH keygen and management [here](https://www.ssh.com/academy/ssh/keygen).**
+**It is recommended to run your Relayer on a VPS instance ([Virtual Private Server](https://njal.la/)). Ensure SSH configuration is enabled for security, you can find information about SSH keygen and management [here](https://www.ssh.com/academy/ssh/keygen).**
 
-## Deploy with docker-compose
+## Build the 5.2.3 image
 
-__PREREQUISITES__
+Use Git, Docker Engine and the Compose v2 plugin. Start in a directory separate from your running deployment. The image tag below is the one used by the supplied Compose file.
 
-1. Update core dependencies 
+```sh
+git clone --single-branch --branch sidechain-v5 https://github.com/torn-boy/tornado-relayer.git tornado-relayer-bsc
+cd tornado-relayer-bsc
+docker build -t tornadocash/relayer:sidechain-v5 .
+```
 
-  - `sudo apt-get update` 
+The build uses the versions and checksums in `yarn.lock`. For a clean rebuild, add `--no-cache` to the Docker build command.
 
-2. Install docker-compose
+## Upgrade an existing BSC relayer
 
-  - `curl -SL https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose`
+Build the image above on the host running the relayer. Once active jobs have finished, return to your existing deployment directory. Use its usual Compose project name and files so the services keep their current `.env.bsc`, Redis queue and volumes. The following command updates the three standard BSC services using the locally built image.
 
-3. Install Docker
+```sh
+docker compose --profile bsc up -d --no-deps --pull never bsc-server bsc-healthWatcher bsc-worker1
+```
 
-  - `curl -fsSL https://get.docker.com -o get-docker.sh && chmod +x get-docker.sh && ./get-docker.sh` 
+On your public BSC relayer URL, check `/status` or `/v1/status` for `"netId": 56`, `"version": "5.2.3"` and a healthy worker. If your deployment runs additional BSC workers, recreate those with the same image.
 
-4. Install git
+## Start BSC on a new host
 
-  - `sudo apt-get install git-all` 
+From the freshly cloned directory, run `cp .env.example .env.bsc` and fill in your settings.
 
-5. Install nginx
+| Setting          | Value                                               |
+| ---------------- | --------------------------------------------------- |
+| `HTTP_RPC_URL`   | Your BSC RPC endpoint                               |
+| `ORACLE_RPC_URL` | Your Ethereum mainnet RPC endpoint                  |
+| `PRIVATE_KEY`    | Your funded BSC worker key, without the `0x` prefix |
+| `REWARD_ACCOUNT` | Your relayer reward address                         |
+| `RELAYER_FEE`    | Your service fee percentage (`0.1` means 0.1%)      |
 
-  - `sudo apt install nginx` 
+To serve the API through a reverse proxy on the host, create `docker-compose.override.yml` in the new checkout with the following port mapping. This publishes the API on loopback at the default `APP_PORT` of 8000.
 
-6. Stop apache2 instance (enabled by default)
+```yaml
+services:
+  bsc-server:
+    ports:
+      - '127.0.0.1:8000:8000'
+```
 
-  - `sudo systemctl stop apache2`
+```sh
+docker compose --profile bsc up -d redis bsc-server bsc-healthWatcher bsc-worker1
+curl -fsS http://127.0.0.1:8000/status
+```
 
-__FIREWALL CONFIGURATION__ 
-
-_* Warning: Failure to configure SSH as the first UFW rule, will lock you out of the instance_ 
-
-1. Make sure UFW is installed by running `apt update` and `apt install ufw` 
-2. Allow SSH in the first position in UFW by running `ufw insert 1 allow ssh`*
-3. Allow HTTP, and HTTPS by running `ufw allow https/tcp/http`
-4. Finalize changes and enable firewall `ufw enable`
-
-__NGINX REVERSE PROXY__
-
-1. Copy the pre-modified nginx policy as your default policy 
-
-  - `cp tornado.conf /etc/nginx/sites-available/default` 
-
-2. Append the default nginx configuration to include streams
-
-  - `echo "stream {  map_hash_bucket_size 128;  map_hash_max_size 128;  include /etc/nginx/conf.d/streams/*.conf; }" >> /etc/nginx/nginx.conf`
-
-3. Create the stream configuration
-
-  - `mkdir /etc/nginx/conf.d/streams && cp tornado-stream.conf /etc/nginx/conf.d/streams/tornado-stream.conf`
-
-4. Start nginx to make sure the configuration is correct 
-
-  - `sudo systemctl restart nginx`
-
-5. Stop nginx
-
-  - `sudo systemctl stop nginx`
-
-__DEPLOYMENT__
-
-1. Clone the repository and enter the directory 
-
-  - `git clone https://git.tornado.ws/tornadocash/classic-relayer -b sidechain-v5 && cd classic-relayer`
-
-2. Check environment files:
-
-   By default each network is preconfigured the naming of `.env.<NETWORK>`
-
-   - `.env.bsc` for Binance Smart Chain
-
-   - `.env.arb` for Arbitrum
-
-   - `.env.op` for Optimism
-
-   - `.env.gnosis` for Gnosis (xdai)
-
-   - `.env.polygon` for Polygon (matic)
-
-   - `.env.avax` for Avalanche C-Chain
-
- 3. Configure (fill) environment files for those networks on which the relayer will be deployed:
-
-    - Set `PRIVATE_KEY` to your relayer address (remove the 0x from your private key) to each environment file (*It is recommended not to reuse the same private keys for each network as a security measure*)
-
-    - Set `VIRTUAL_HOST` and `LETSENCRYPT_HOST` a unique subndomain for every network to each environment file, eg: `mainnet.example.com` for Ethereum, `binance.example.com` for Binance etc
-    - Add a A wildcard record DNS record with the value assigned to your instance IP address to configure subdomains
-    - Set `RELAYER_FEE` to what you would like to charge as your fee
-    - Set `RPC_URL` to a non-censoring RPC (You can [run your own](https://github.com/feshchenkod/rpc-nodes), or use a [free option](https://chainnodes.org/))
-    - Set `ORACLE_RPC_URL` to an Ethereum native RPC endpoint
-
- 4. Build docker image for sidechain with simple `npm run build` command
-
- 5. Uncomment the `env_file` lines (remove `# `) for the associated network services in `docker-compose.yml` for chosen chains (networks)
-
- 6. Run docker-compose for the configured networks specified via `--profile <NETWORK_SYMBOL>`, for example (if you run relayer only Binance Smart Chain and Arbitrum):
-
-    - `docker-compose --profile bsc --profile arb up -d`
-
- 7. Visit your domain addresses and check each `/status` endpoint to ensure there is no errors in the `status` fields
+Configure your BSC hostname and HTTPS reverse proxy to forward to `http://127.0.0.1:8000`. Check the same status response over HTTPS before advertising the relayer. The supplied Compose file also defines profiles for Polygon, Gnosis, Arbitrum, Optimism and Avalanche. Each profile reads its own `.env.<network>` file. Deployments using the bundled proxy services should set `VIRTUAL_HOST` and `LETSENCRYPT_HOST` in each network’s environment. [Compose services](docker-compose.yml) · [nginx template](tornado.conf) · [stream template](tornado-stream.conf)
 
 ## Run locally for one chain
 
-1. `yarn`
+1. `yarn install --frozen-lockfile`
 2. `cp .env.example .env`
 3. Modify `.env` as needed (described above)
-4. `yarn start`
+4. Start Redis with `docker compose up -d redis`, then run `yarn concurrently "yarn server" "yarn worker" "yarn healthWatcher"`.
 5. Go to `http://127.0.0.1:8000`
 6. In order to execute withdraw request, you can run following command
 
@@ -118,7 +67,7 @@ __DEPLOYMENT__
 curl -X POST -H 'content-type:application/json' --data '<input data>' http://127.0.0.1:8000/relay
 ```
 
-Relayer should return a transaction hash
+The relayer returns a job ID. Query `/v1/jobs/<id>` to follow the withdrawal.
 
 In that case you will need to add https termination yourself because browsers with default settings will prevent https
 tornado.cash UI from submitting your request over http connection

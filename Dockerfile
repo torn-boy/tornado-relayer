@@ -2,7 +2,7 @@ FROM node:16
 WORKDIR /app
 
 COPY package.json yarn.lock ./
-RUN yarn && yarn cache clean --force
+RUN yarn install --frozen-lockfile && yarn cache clean --force
 COPY . .
 
 EXPOSE 8000

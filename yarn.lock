@@ -508,8 +508,8 @@
 
 "@tornado/gas-price-oracle@^0.5.3":
   version "0.5.3"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz#fb5423dddee2f52edbc16174c5ddce90bea5413d"
-  integrity sha512-LpVfPiPIz3FOmJdiqJf/yoeO5n9/Pd5jgtdY+6hB9lNW0AiWhylhpScojICViS+3OL9QC8CoTlgr+kbfGeO9pQ==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Fgas-price-oracle/-/0.5.3/gas-price-oracle-0.5.3.tgz#2bfecf70437d22e33e8912a04d9e0149bf7b67de"
+  integrity sha512-fHGLKxSMEWY0LtMj8ErRX4NcqTueryYPEmmNzJx+vNydAwx5ecjBQSV4zQPRNPrJdokn5WhLb/1SFGOBqHaSuA==
   dependencies:
     axios "^0.21.2"
     bignumber.js "^9.0.0"
@@ -517,18 +517,18 @@
 
 "@tornado/tornado-config@^1.0.8":
   version "1.0.8"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-config/-/1.0.8/tornado-config-1.0.8.tgz#f592c2ea5e382e0b945d6ae1fd09354975ca3087"
+  resolved "https://raw.githubusercontent.com/torn-boy/tornado-relayer/6adbb587a0ff5b743c056cd6ed75e47042b369ea/vendor/tornado-config-1.0.8.tgz#f592c2ea5e382e0b945d6ae1fd09354975ca3087"
   integrity sha512-1CakJyl1u/3pYzfg5hHmrcU9Pm38iDGEJ1k27yH4or2LTPASYWJduZmbp35TMtZ4+EP8prJzOsqVYn+rzEHecg==
 
 "@tornado/tornado-config@^2.0.0":
   version "2.0.0"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz#52bbc179ecb2385f71b4d56e060b68e7dd6fb8b4"
-  integrity sha512-7EkpWNfEm34VEOrbLnPpvd/aUJYnA1L+6/qx2fZ/AfmuJFkjSZ18Z4jvVGNY7ktKIhTu3/Tbze+9l3eNueCNIA==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftornado-config/-/2.0.0/tornado-config-2.0.0.tgz#0ab73fae5d6b95712396479911c6da9a6b407c89"
+  integrity sha512-HRcZtzKhVOhsotiuguGe0UMb/30nqFweRw+3PmnULLxKrXKV6zH9V1jj2R+6TBAeXFJwr8Yhe16BdHvG2/7SRg==
 
 "@tornado/tornado-oracles@^3.3.0":
   version "3.3.0"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftornado-oracles/-/3.3.0/tornado-oracles-3.3.0.tgz#6358f896f399904ed8deb9b8f4253e77732bd227"
-  integrity sha512-OBJ+TmygY6VMcYJCPxSOAzPDZpmF4WhRVhjgTEhqw+hg70WW9L4b3DC1B1P/4Gmar2lzi6BnTI4ckkDy/xsHQQ==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftornado-oracles/-/3.3.0/tornado-oracles-3.3.0.tgz#2e9eab88c359333d791f704f6867765f3c27ff9b"
+  integrity sha512-tUPLs/9uQKlm0glGX7SYdQYjk1hmLb2AL9LivGDArrqXkkTGKUbqcTi2/xRSu715oRFDaQcXV9i+8oIZzpGBWA==
   dependencies:
     "@tornado/gas-price-oracle" "^0.5.3"
     "@tornado/tornado-config" "^2.0.0"
@@ -538,8 +538,8 @@
 
 "@tornado/tx-manager@^0.4.9":
   version "0.4.9"
-  resolved "https://git.tornado.ws/api/packages/tornado-packages/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz#075add158e3c01da1b34bbcd68ba764491746ceb"
-  integrity sha512-0j6bquM/gB6JZvm2nv2y1Xo35IvsZcjQ0BMlvoH8OZYa1dzXQCiNBKSlNOIBOFMsOklUXHNE1JmQpko+rTgXOA==
+  resolved "https://codeberg.org/api/packages/torndao/npm/%40tornado%2Ftx-manager/-/0.4.9/tx-manager-0.4.9.tgz#8f4cb72634b51cdad13112cd1171b2ed35c585e5"
+  integrity sha512-sdIflHE9mxKYgSnvUHSb80d21eWWhTjvKgLEcufbHr5V8Y2VnC+kJqRDlZNA2FtJcB769taFC6OeRkaGnE5y5g==
   dependencies:
     "@tornado/gas-price-oracle" "^0.5.3"
     async-mutex "^0.2.4"
